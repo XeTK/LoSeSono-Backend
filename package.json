@@ -1,0 +1,19 @@
+{
+  "name": "LoSeSono_Backend",
+  "version": "1.0.0",
+  "description": "This is the backend application for the LoSeSono Android application.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha"
+  },
+  "author": "Tom Rosier",
+  "license": "GPL v3",
+  "dependencies": {
+    "color": "^0.7.3",
+    "hapi": "^8.2.0",
+    "pg": "^4.3.0",
+    "pg-hstore": "^2.3.1",
+    "sequelize": "^2.0.3"
+  }
+}
