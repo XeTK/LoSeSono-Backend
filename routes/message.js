@@ -1,19 +1,24 @@
 
-function setup(server) {
+var db = require('../db/message');
+
+function setup(deps) {
+
+	var server = deps.server;
+
+	db.setup(deps);
 
 	server.route(
 		{
 		    method: 'GET',
 		    path: '/messages',
 		    handler: function (request, reply) {
-		        //reply('TODO /messages');
+		    	db.getAllMessages(
+					function(messages) {
+						console.log('getAllMessages response: ' +JSON.stringify(messages));
 
-		        var obj = {
-		        	"text": "Hello World",
-		        	"test": "1"
-		        };
-		        
-		        reply(obj);
+		    			reply(messages);
+					}
+				);
 		    }
 		}
 	);
@@ -33,7 +38,12 @@ function setup(server) {
 		    method: 'POST',
 		    path: '/message/add',
 		    handler: function (request, reply) {
-		        reply('TODO /message/add');
+		    	db.addMessage(
+		    		request.payload,
+		    		function(response) {
+		    			reply({"status":"successful"});
+		    		}
+		    	);
 		    }
 		}
 	);

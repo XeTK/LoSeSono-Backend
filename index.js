@@ -1,4 +1,4 @@
-var Sequelize = require('Sequelize');
+var Sequelize = require('sequelize');
 var Hapi      = require('hapi');
 
 // Get all of the external routes ready to use.
@@ -28,18 +28,21 @@ var sequelize = new Sequelize(
 	}
 );
 
-console.log(sequelize);
-
 var server = new Hapi.Server();
 server.connection({ port: 3000 });
 
+var deps = {
+	"server": server,
+	"database": sequelize
+}
+
 // Setup all of the external routes.
-serverRoute.setup(server);
-userRoute.setup(server);
-friendRoute.setup(server);
-messageRoute.setup(server);
-commentsRoute.setup(server);
-voteRoute.setup(server);
+serverRoute.setup(deps);
+userRoute.setup(deps);
+friendRoute.setup(deps);
+messageRoute.setup(deps);
+commentsRoute.setup(deps);
+voteRoute.setup(deps);
 
 server.start(
 	function () {

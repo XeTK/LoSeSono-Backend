@@ -1,5 +1,7 @@
 
-function setup(server) {
+function setup(deps) {
+	
+	var server = deps.server;
 
 	server.route(
 		{
