@@ -6,7 +6,14 @@ function setup(server) {
 		    method: 'GET',
 		    path: '/messages',
 		    handler: function (request, reply) {
-		        reply('TODO /messages');
+		        //reply('TODO /messages');
+
+		        var obj = {
+		        	"text": "Hello World",
+		        	"test": "1"
+		        };
+		        
+		        reply(obj);
 		    }
 		}
 	);
