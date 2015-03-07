@@ -1,14 +1,61 @@
 
+var users = {
+    john: {
+        id: 'john',
+        password: 'password',
+        name: 'John Doe'
+    }
+};
+
 function setup(deps) {
 
 	var server = deps.server;
 
 	server.route(
 		{
-		    method: 'GET',
+		    method: 'POST',
 		    path: '/login',
+		    config: {
+	            auth: {
+	                mode: 'try',
+	                strategy: 'session'
+	            },
+	            plugins: {
+	                'hapi-auth-cookie': {
+	                    redirectTo: false
+	                }
+	            }
+        	},
 		    handler: function (request, reply) {
-		        reply('TODO /login');
+		    	console.log('we got a request.' + JSON.stringify(request.payload));
+
+				if (request.auth.isAuthenticated) {
+			        return reply.redirect('/');
+			    }
+
+			    var message = '';
+			    var account = null;
+
+
+		        if (!request.payload.username || !request.payload.password) {
+
+		            message = 'Missing username or password';
+		        } else {
+
+		            account = users[request.payload.username];
+
+		            if (!account || account.password !== request.payload.password) {
+
+		                message = 'Invalid username or password';
+		            }
+		        }
+			    
+
+			    request.auth.session.set(account);
+
+			    reply(true);
+
+			    //return reply.redirect('/');
 		    }
 		}
 	);
@@ -17,8 +64,13 @@ function setup(deps) {
 		{
 		    method: 'GET',
 		    path: '/logout',
+		    config: {
+	            auth: 'session'
+	        },
 		    handler: function (request, reply) {
-		        reply('TODO /logout');
+		        request.auth.session.clear();
+
+    			return reply.redirect('/');
 		    }
 		}
 	);

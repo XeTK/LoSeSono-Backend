@@ -11,6 +11,9 @@ function setup(deps) {
 		{
 		    method: 'GET',
 		    path: '/messages',
+		    config: {
+            	auth: 'session'
+        	},
 		    handler: function (request, reply) {
 		    	db.getAllMessages(
 					function(messages) {
@@ -26,6 +29,9 @@ function setup(deps) {
 	server.route(
 		{
 		    method: 'GET',
+		    config: {
+            	auth: 'session'
+        	},
 		    path: '/message/{id}',
 		    handler: function (request, reply) {
 		        reply('TODO /message/{id}');
@@ -37,6 +43,9 @@ function setup(deps) {
 		{
 		    method: 'POST',
 		    path: '/message/add',
+		    config: {
+            	auth: 'session'
+        	},
 		    handler: function (request, reply) {
 		    	db.addMessage(
 		    		request.payload,

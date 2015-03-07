@@ -31,6 +31,23 @@ var sequelize = new Sequelize(
 var server = new Hapi.Server();
 server.connection({ port: 3000 });
 
+server.register(
+	require('hapi-auth-cookie'), 
+	function (err) {
+
+    	server.auth.strategy(
+    		'session', 
+    		'cookie', 
+    		{
+		        password: 'secret',
+		        cookie: 'sid-example',
+		        redirectTo: '/login',
+		        isSecure: false
+    		}
+    	);
+	}
+);
+
 var deps = {
 	"server": server,
 	"database": sequelize
