@@ -1,5 +1,9 @@
 \c losesono
 
+drop table message_votes;
+drop table comments_votes;
+drop table vote_type;
+drop table comments;
 drop table message_friend_group;
 drop table messages;
 drop table range;
@@ -81,4 +85,43 @@ create table message_friend_group (
 	modified_date timestamp,
 	created_by    varchar(100),
 	modified_by   varchar(100)
+);
+
+create table comments (
+	comment_id    serial       primary key,
+	message_id    integer      not null references messages(message_id),
+	user_id       integer      not null references users(user_id),
+	content       varchar(144) not null,
+	created_date  timestamp,
+	modified_date timestamp,
+	created_by    varchar(100),
+	modified_by   varchar(100)
+);
+
+create table vote_type (
+	type    varchar(20) primary key,
+	effect  integer     not null,
+	enabled boolean     not null
+);
+
+create table comments_votes (
+	comment_vote_id serial      primary key,
+	comment_id      integer     not null references comments(comment_id),
+	user_id         integer     not null references users(user_id),
+	vote_type       varchar(20) not null references vote_type(type),
+	created_date    timestamp,
+	modified_date   timestamp,
+	created_by      varchar(100),
+	modified_by     varchar(100)
+);
+
+create table message_votes (
+	message_vote_id serial      primary key,
+	message_id      integer     not null references messages(message_id),
+	user_id         integer     not null references users(user_id),
+	vote_type       varchar(20) not null references vote_type(type),
+	created_date    timestamp,
+	modified_date   timestamp,
+	created_by      varchar(100),
+	modified_by     varchar(100)
 );
