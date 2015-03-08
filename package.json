@@ -16,6 +16,7 @@
     "hapi-auth-cookie": "^2.0.0",
     "pg": "^4.3.0",
     "pg-hstore": "^2.3.1",
+    "rekuire": "^0.1.9",
     "sequelize": "^2.0.3"
   }
 }

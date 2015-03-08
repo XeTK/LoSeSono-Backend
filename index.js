@@ -1,19 +1,22 @@
+var rek       = require('rekuire');
+var fs        = require('fs');
+var colors    = require('colors');
+
 var Sequelize = require('sequelize');
 var Hapi      = require('hapi');
-var fs        = require('fs');
 
-var auth   = require('./auth.js');
-var routes = require('./routeloader.js');
+var auth   = rek('auth.js');
+var routes = rek('routeloader.js');
 
-var priKeyPath = 'private-key.pem';
-var certPath   = 'public-cert.pem';
+var config = rek('config.json');
+
 
 var sequelize = new Sequelize(
-	'losesono', 
-	'application', 
-	'application', 
+	config.database.name, 
+	config.database.username, 
+	config.database.password, 
 	{
-		host:    'localhost',
+		host:    config.database.host,
 		dialect: 'postgres',
 
 		dialectOptions: {
@@ -28,6 +31,9 @@ var sequelize = new Sequelize(
 	}
 );
 
+var priKeyPath = config.server.tls.key;
+var certPath   = config.server.tls.cert;
+
 var fKey  = fs.existsSync(priKeyPath) ? fs.readFileSync(priKeyPath) : null;
 var fCert = fs.existsSync(certPath)   ? fs.readFileSync(certPath)   : null;
 
@@ -36,16 +42,17 @@ if (!fKey || !fCert) {
 	process.exit(1);
 }
 
-var options = {
-	port: 3000,
-	tls: {
-		key:  fKey,
-		cert: fCert
-	}
-};
-
 var server = new Hapi.Server();
-server.connection(options);
+
+server.connection(
+	{
+		port: config.server.port,
+		tls: {
+			key:  fKey,
+			cert: fCert
+		}
+	}
+);
 
 var routes = routes.route_holder;
 
@@ -64,6 +71,6 @@ for(var route in routes)
 
 server.start(
 	function () {
-    	console.log('Server running at:', server.info.uri);
+    	console.log('Server running at:', server.info.uri.yellow);
 	}
 );

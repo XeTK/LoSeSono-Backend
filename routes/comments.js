@@ -3,23 +3,17 @@ function setup(deps) {
 
 	var server = deps.server;
 
-	server.route(
-		{
-		    method: 'GET',
-		    path: '/comments/{message_id}',
-		    handler: function (request, reply) {
-		        reply('TODO /comments/{message_id}');
-		    }
+	server.getRoute(
+		'/comments/{message_id}',
+		function (request, reply) {
+		    reply('TODO /comments/{message_id}');
 		}
 	);
 
-	server.route(
-		{
-		    method: 'POST',
-		    path: '/comments/add',
-		    handler: function (request, reply) {
-		        reply('TODO /comments/add');
-		    }
+	server.postRoute(
+		'/comments/add',
+		function (request, reply) {
+		    reply('TODO /comments/add');
 		}
 	);
 }

@@ -7,55 +7,38 @@ function setup(deps) {
 
 	db.setup(deps);
 
-	server.route(
-		{
-		    method: 'GET',
-		    path: '/messages',
-		    config: {
-            	auth: 'session'
-        	},
-		    handler: function (request, reply) {
-		    	db.getAllMessages(
-					function(messages) {
-						console.log('getAllMessages response: ' +JSON.stringify(messages));
+	server.getRoute(
+		'/messages',
+		function (request, reply) {
+	    	db.getAllMessages(
+				function(messages) {
+					console.log('getAllMessages response: ' +JSON.stringify(messages));
 
-		    			reply(messages);
-					}
-				);
-		    }
+	    			reply(messages);
+				}
+			);
+	    }
+	);
+
+	server.getRoute(
+		'/message/{id}',
+		function (request, reply) {
+		    reply('TODO /message/{id}');
 		}
 	);
 
-	server.route(
-		{
-		    method: 'GET',
-		    config: {
-            	auth: 'session'
-        	},
-		    path: '/message/{id}',
-		    handler: function (request, reply) {
-		        reply('TODO /message/{id}');
-		    }
-		}
+	server.postRoute(
+		'/message/add',
+		function (request, reply) {
+	    	db.addMessage(
+	    		request.payload,
+	    		function(response) {
+	    			reply({"status":"successful"});
+	    		}
+	    	);
+	    }
 	);
 
-	server.route(
-		{
-		    method: 'POST',
-		    path: '/message/add',
-		    config: {
-            	auth: 'session'
-        	},
-		    handler: function (request, reply) {
-		    	db.addMessage(
-		    		request.payload,
-		    		function(response) {
-		    			reply({"status":"successful"});
-		    		}
-		    	);
-		    }
-		}
-	);
 }
 
 module.exports = function(route_holder) {

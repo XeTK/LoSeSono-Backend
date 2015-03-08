@@ -34,10 +34,10 @@ function setup(deps) {
 	    		'session', 
 	    		'cookie', 
 	    		{
-			        password: 'secret',
-			        cookie: 'sid-example',
+			        password:   'secret',
+			        cookie:     'losesono',
 			        redirectTo: '/login',
-			        isSecure: true
+			        isSecure:    true
 	    		}
 	    	);
 		}
@@ -45,14 +45,13 @@ function setup(deps) {
 
 	server.route(
 		{
-		    method: ['GET','POST'],
+		    method: [
+		    	'GET',
+		    	'POST'
+		    ],
 		    path: '/login',
 		    config: {
 		    	auth: 'simple',
-	            /*auth: {
-	                mode: 'try',
-	                strategy: 'session'
-	            },*/
 	            plugins: {
 	                'hapi-auth-cookie': {
 	                    redirectTo: false
@@ -60,9 +59,6 @@ function setup(deps) {
 	            }
         	},
 		    handler: function (request, reply) {
-		    	console.log('we got a request.' + JSON.stringify(request.payload));
-
-		    	console.log(JSON.stringify(request.auth));
 
 				if (request.auth.isAuthenticated) {
 			        var account = request.auth.credentials;
@@ -88,10 +84,41 @@ function setup(deps) {
 		    }
 		}
 	);
+
+	server.getRoute = function(path, callback) {
+
+		server.route(
+			{
+			    method: 'GET',
+			    path:   path,
+			    config: {
+		            auth: 'session'
+		        },
+			    handler: function (request, reply) {
+			    	callback(request, reply);
+			    }
+			}
+		);
+	};
+
+	server.postRoute = function(path, callback) {
+		server.route(
+			{
+			    method: 'POST',
+			    path: path,
+			    config: {
+	            	auth: 'session'
+	        	},
+			    handler: function (request, reply) {
+					callback(request, reply);
+			    }
+			}
+		);
+	}
+
 }
 
 var validate = function (username, password, callback) {
-	console.log('Valudating user: ' + username);
 
     var user = users[username];
 
@@ -99,10 +126,7 @@ var validate = function (username, password, callback) {
         return callback(null, false);
     }
 
-    console.log('password: ' + password);
     var isValid = (user.password == password);
-
-    console.log('isValid: ' + isValid);
 
     callback(null, isValid, { id: user.id, name: user.name });
     

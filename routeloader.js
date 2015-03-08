@@ -3,7 +3,6 @@
 
 var fs          = require('fs');
 var path_module = require('path');
-var colors      = require('colors');
 
 var route_holder = {};
 
