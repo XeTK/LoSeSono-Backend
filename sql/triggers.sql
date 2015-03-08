@@ -1,3 +1,5 @@
+/* Tie all of the tables to the triggers they need. */
+
 \c losesono
 
 create trigger insert_stamp before insert on users
