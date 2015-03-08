@@ -26,4 +26,6 @@ function setup(deps) {
 
 }
 
-exports.setup = setup;
+module.exports = function(route_holder) {
+    route_holder['user'] = setup;
+};

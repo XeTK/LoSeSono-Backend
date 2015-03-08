@@ -1,6 +1,6 @@
 
 function setup(deps) {
-	
+
 	var server = deps.server;
 
 	server.route(
@@ -24,4 +24,6 @@ function setup(deps) {
 	);
 }
 
-exports.setup = setup;
+module.exports = function(route_holder) {
+    route_holder['vote'] = setup;
+};

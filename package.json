@@ -10,7 +10,7 @@
   "author": "Tom Rosier",
   "license": "GPL v3",
   "dependencies": {
-    "color": "^0.7.3",
+    "colors": "^1.0.3",
     "hapi": "^8.2.0",
     "hapi-auth-basic": "^2.0.0",
     "hapi-auth-cookie": "^2.0.0",

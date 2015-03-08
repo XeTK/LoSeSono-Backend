@@ -2,15 +2,8 @@ var Sequelize = require('sequelize');
 var Hapi      = require('hapi');
 var fs        = require('fs');
 
-var auth = require('./auth.js');
-
-// Get all of the external routes ready to use.
-var serverRoute   = require('./routes/server.js');
-var userRoute     = require('./routes/user.js');
-var friendRoute   = require('./routes/friend.js');
-var messageRoute  = require('./routes/message.js');
-var commentsRoute = require('./routes/comments.js');
-var voteRoute     = require('./routes/vote.js');
+var auth   = require('./auth.js');
+var routes = require('./routeloader.js');
 
 var priKeyPath = 'private-key.pem';
 var certPath   = 'public-cert.pem';
@@ -54,21 +47,20 @@ var options = {
 var server = new Hapi.Server();
 server.connection(options);
 
+var routes = routes.route_holder;
+
 var deps = {
 	"server":   server,
-	"database": sequelize
+	"database": sequelize,
+	"routes":   routes
 }
 
 // Setup the authentication.
 auth.setup(deps);
 
 // Setup all of the external routes.
-serverRoute.setup(deps);
-userRoute.setup(deps);
-friendRoute.setup(deps);
-messageRoute.setup(deps);
-commentsRoute.setup(deps);
-voteRoute.setup(deps);
+for(var route in routes) 
+	routes[route](deps);
 
 server.start(
 	function () {
