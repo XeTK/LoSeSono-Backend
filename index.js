@@ -1,5 +1,8 @@
 var Sequelize = require('sequelize');
 var Hapi      = require('hapi');
+var fs        = require('fs');
+
+var auth = require('./auth.js');
 
 // Get all of the external routes ready to use.
 var serverRoute   = require('./routes/server.js');
@@ -9,49 +12,55 @@ var messageRoute  = require('./routes/message.js');
 var commentsRoute = require('./routes/comments.js');
 var voteRoute     = require('./routes/vote.js');
 
+var priKeyPath = 'private-key.pem';
+var certPath   = 'public-cert.pem';
+
 var sequelize = new Sequelize(
 	'losesono', 
 	'application', 
 	'application', 
 	{
-		host: 'localhost',
+		host:    'localhost',
 		dialect: 'postgres',
+
 		dialectOptions: {
 			multipleStatements: true
 		},
 
 		pool: {
-			max: 5,
-			min: 0,
+			max:  5,
+			min:  0,
 			idle: 10000
 		}
 	}
 );
 
-var server = new Hapi.Server();
-server.connection({ port: 3000 });
+var fKey  = fs.existsSync(priKeyPath) ? fs.readFileSync(priKeyPath) : null;
+var fCert = fs.existsSync(certPath)   ? fs.readFileSync(certPath)   : null;
 
-server.register(
-	require('hapi-auth-cookie'), 
-	function (err) {
+if (!fKey || !fCert) {
+	console.error('TLS Cert or Private Key missing!'.red);
+	process.exit(1);
+}
 
-    	server.auth.strategy(
-    		'session', 
-    		'cookie', 
-    		{
-		        password: 'secret',
-		        cookie: 'sid-example',
-		        redirectTo: '/login',
-		        isSecure: false
-    		}
-    	);
+var options = {
+	port: 3000,
+	tls: {
+		key:  fKey,
+		cert: fCert
 	}
-);
+};
+
+var server = new Hapi.Server();
+server.connection(options);
 
 var deps = {
-	"server": server,
+	"server":   server,
 	"database": sequelize
 }
+
+// Setup the authentication.
+auth.setup(deps);
 
 // Setup all of the external routes.
 serverRoute.setup(deps);
