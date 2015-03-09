@@ -139,3 +139,54 @@ begin
 end;
 $body$
 language plpgsql volatile;
+
+create or replace function valid_password(
+  e_username  text, 
+  e_password  text
+) 
+returns boolean as
+  $body$declare
+
+  l_count        int;
+  l_ret          text;
+  l_salt         text;
+  l_hashed_pwd   text;
+  l_enc_pwd      text;
+  l_comp_enc_pwd text;
+begin
+
+  select count(*)
+  into   l_count
+  from   users
+  where  username = e_username;
+
+  if l_count > 0 then
+    
+      select uh.salt,
+             uh.hashed_password
+      into   l_salt,
+             l_enc_pwd
+      from   users u,
+             users_hash uh
+      where  u.username = e_username
+      and    u.user_id  = uh.user_id;
+
+      select md5(e_password::text)
+      into   l_hashed_pwd;
+      
+      select crypt(l_hashed_pwd, l_salt)
+      into   l_comp_enc_pwd;
+
+      if l_enc_pwd = l_comp_enc_pwd then
+  return true;
+      else
+  return false;
+      end if;
+  else
+    return false;
+  end if;
+
+end;
+$body$
+language plpgsql volatile;
+

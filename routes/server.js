@@ -5,6 +5,8 @@ function setup(deps) {
 
 	var server = deps.server;
 
+	db.setup(deps);
+
 	server.postRoute(
 		'/register',
 		function (request, reply) {
@@ -28,7 +30,20 @@ function setup(deps) {
 		   			"password"  : password
 		   		};
 
+		   		db.registerUser(
+		   			user, 
+		   			function(response) {
 
+		   				reply(response);
+
+/*'New user created!';
+
+'Email already in use';
+
+'Username Taken';
+*/
+		   			}
+		   		);
 
 		   	}
 		}

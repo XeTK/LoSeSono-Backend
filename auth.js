@@ -1,16 +1,11 @@
-var users = {
-    tom: {
-        username: 'tom',
-        password: 'password',   // 'secret'
-        name: 'John Doe',
-        id: '1'
-    }
-};
+
+var db = null;
 
 function setup(deps) {
 
 	var server = deps.server;
-	var db     = deps.database;
+	
+	db     = deps.database;
 
 	server.register(
 	    require('hapi-auth-basic'), 
@@ -120,16 +115,58 @@ function setup(deps) {
 
 var validate = function (username, password, callback) {
 
-    var user = users[username];
+	db.query(
+		"select valid_password(:username, :password)", 
+		{ 
+			replacements: { 
+				username: username,
+				password: password
+			},
+			type: db.QueryTypes.SELECT
+		}
+	)
+  	.success(
+  		function(response) {
+  			var isValid = response[0].valid_password;
 
-    if (!user) {
-        return callback(null, false);
-    }
+  			console.log(isValid);
 
-    var isValid = (user.password == password);
+  			if (isValid) {
 
-    callback(null, isValid, { id: user.id, name: user.name });
-    
+				db.query(
+					"select u.user_id, \
+					        u.first_name, \
+					        u.last_name, \
+					        u.username, \
+					        up.email, \
+					        up.facebook_id \
+					 from  users u, \
+					       users_private up \
+					 where u.user_id = up.user_id \
+					 and   u.username = :username \
+					", 
+					{ 
+						replacements: { 
+							username:  username,
+						},
+						type: db.QueryTypes.SELECT
+					}
+				)
+			  	.success(
+			  		function(response) {
+
+			  			var user = response[0];
+
+			  			console.log(JSON.stringify(user));
+
+			  			callback(null, isValid, user);
+			  		}
+			  	);
+  			} else {
+  				callback(null, false, null);
+  			}
+  		}
+  	);
 };
 
 exports.setup = setup;
