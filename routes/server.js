@@ -7,45 +7,48 @@ function setup(deps) {
 
 	db.setup(deps);
 
-	server.postRoute(
-		'/register',
-		function (request, reply) {
-			var params = request.payload;
-		   	
-		   	var firstName = params.firstname;
-		   	var lastName  = params.lastname;
-		   	var userName  = params.username;
-		   	var email     = params.email;
-		   	var password  = params.password;
 
-		   	if (!firstName || !lastName || !userName || !email || !password) {
-		   		reply({"status":"failed"});
-		   	} else {
+	server.route(
+		{
+			method: 'POST',
+			path: '/register',
+			handler: function (request, reply) {
+				var params = request.payload;
+			   	
+			   	var firstName = params.firstname;
+			   	var lastName  = params.lastname;
+			   	var userName  = params.username;
+			   	var email     = params.email;
+			   	var password  = params.password;
 
-		   		var user = {
-		   			"firstname" : firstName,
-		   			"lastname"  : lastName,
-		   			"username"  : userName,
-		   			"email"     : email,
-		   			"password"  : password
-		   		};
+			   	if (!firstName || !lastName || !userName || !email || !password) {
+			   		reply({"status":"failed"});
+			   	} else {
 
-		   		db.registerUser(
-		   			user, 
-		   			function(response) {
+			   		var user = {
+			   			"firstname" : firstName,
+			   			"lastname"  : lastName,
+			   			"username"  : userName,
+			   			"email"     : email,
+			   			"password"  : password
+			   		};
 
-		   				reply(response);
+			   		db.registerUser(
+			   			user, 
+			   			function(response) {
 
-/*'New user created!';
+			   				reply(response);
 
-'Email already in use';
+							/*'New user created!';
 
-'Username Taken';
-*/
-		   			}
-		   		);
+							'Email already in use';
 
-		   	}
+							'Username Taken';
+							*/
+			   			}
+			   		);
+			   	}
+			}
 		}
 	);
 

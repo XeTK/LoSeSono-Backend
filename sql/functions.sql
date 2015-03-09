@@ -7,12 +7,12 @@ as
 	$$
 begin
 
-        new.created_date  := current_timestamp;
-        new.modified_date := current_timestamp;
-        new.created_by    := current_user;
-        new.modified_by   := current_user;
+  new.created_date  := current_timestamp;
+  new.modified_date := current_timestamp;
+  new.created_by    := current_user;
+  new.modified_by   := current_user;
 
-        return new;
+  return new;
 end;
 $$ language plpgsql;
 
@@ -21,10 +21,10 @@ as
 	$$
 begin
 
-        new.modified_date := current_timestamp;
-        new.modified_by   := current_user;
+  new.modified_date := current_timestamp;
+  new.modified_by   := current_user;
 
-        return new;
+  return new;
 end;
 $$ language plpgsql;
 
@@ -178,9 +178,9 @@ begin
       into   l_comp_enc_pwd;
 
       if l_enc_pwd = l_comp_enc_pwd then
-  return true;
+        return true;
       else
-  return false;
+        return false;
       end if;
   else
     return false;
