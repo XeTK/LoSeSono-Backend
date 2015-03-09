@@ -12,7 +12,7 @@ function setup(deps) {
 
 	server.postRoute(
 		'/friend/add',
-		unction (request, reply) {
+		function (request, reply) {
 	        reply('TODO /friend/add');
 	    }
 	);

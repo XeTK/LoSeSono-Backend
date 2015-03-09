@@ -1,4 +1,6 @@
-\c losesono
+﻿\c losesono
+
+create extension pgcrypto;
 
 create or replace function insert_time_stamp() returns trigger 
 as 
@@ -44,6 +46,96 @@ begin
     into ret using reljson::cstring;
 
   return ret;
+end;
+$body$
+language plpgsql volatile;
+
+create or replace function insert_user(
+  e_firstname text,
+  e_lastname  text,
+  e_username  text, 
+  e_email     text, 
+  e_password  text
+) 
+returns text as
+  $body$declare
+
+  l_count      int;
+  l_user_id    int;
+  l_ret        text;
+  l_salt       text;
+  l_hashed_pwd text;
+  l_enc_pwd    text;
+begin
+
+  select count(*)
+  into   l_count
+  from   users
+  where  username = e_username;
+
+  if l_count = 0 then
+    
+    select count(*)
+    into   l_count
+    from   users_private
+    where  email = lower(e_email);
+
+    if l_count = 0 then 
+
+      insert into users (
+        first_name,
+        last_name,
+        username
+      ) values (
+        e_firstname,
+        e_lastname,
+        e_username
+      );
+
+      select user_id
+      into   l_user_id
+      from   users u
+      where  u.first_name = e_firstname
+      and    u.last_name  = e_lastname
+      and    u.username   = e_username;
+
+      insert into users_private (
+        user_id,
+        email
+      ) values (
+        l_user_id,
+        e_email
+      );
+
+      select gen_salt('bf'::text)
+      into   l_salt;
+
+      select md5(e_password::text)
+      into   l_hashed_pwd;
+      
+      select crypt(l_hashed_pwd, l_salt)
+      into   l_enc_pwd;
+
+      insert into users_hash (
+        user_id,
+        salt,
+        hashed_password
+      ) values (
+        l_user_id,
+        l_salt,
+        l_enc_pwd
+      );
+
+      return 'New user created!';
+
+    else 
+      return 'Email already in use';
+    end if;
+
+  else
+    return 'Username Taken';
+  end if;
+
 end;
 $body$
 language plpgsql volatile;

@@ -35,15 +35,14 @@ create table users_private (
 );
 
 create table users_hash (
-	hash_id       serial       primary key,
-	user_id       integer      not null references users(user_id),
-	salt          varchar(512) not null,
-	encrypt_code  varchar(512) not null,
-	password      varchar(768) not null,
-	created_date  timestamp,
-	modified_date timestamp,
-	created_by    varchar(100),
-	modified_by   varchar(100)
+	hash_id              serial       primary key,
+	user_id              integer      not null references users(user_id),
+	salt                 varchar(512) not null,
+	hashed_password      varchar(512) not null,
+	created_date         timestamp,
+	modified_date        timestamp,
+	created_by           varchar(100),
+	modified_by          varchar(100)
 );
 
 create table friends (
