@@ -58,9 +58,11 @@ function setup(deps) {
 				if (request.auth.isAuthenticated) {
 					var account = request.auth.credentials;
 					request.auth.session.set(account);
+					reply(account);
+				} else {
+					reply('Error');
 				}
 
-				return reply.redirect('/');
 			}
 		}
 	);
