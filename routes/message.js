@@ -12,6 +12,7 @@ function setup(deps) {
 		function (request, reply) {
 	    	db.getAllMessages(
 				function(messages) {
+
 					console.log('getAllMessages response: ' +JSON.stringify(messages));
 
 	    			reply(messages);
@@ -30,8 +31,15 @@ function setup(deps) {
 	server.postRoute(
 		'/message/add',
 		function (request, reply) {
+
+			var payload = request.payload;
+
+			payload['user_id'] = request.auth.credentials.user_id;
+
+			console.log(JSON.stringify(payload));
+
 	    	db.addMessage(
-	    		request.payload,
+	    		payload,
 	    		function(response) {
 	    			reply({"status":"successful"});
 	    		}
