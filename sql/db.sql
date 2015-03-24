@@ -49,7 +49,7 @@ create table friends (
 	friends_id     serial       primary key,
 	user_id        integer      not null references users(user_id),
 	friend_user_id integer      not null references users(user_id),
-	start_date     date         not null check(start_date >= now()),
+	start_date     date         not null check(start_date >= current_date()),
 	end_date       date,
 	created_date   timestamp,
 	modified_date  timestamp,

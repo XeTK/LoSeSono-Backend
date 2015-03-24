@@ -5,11 +5,14 @@ function setup(deps) {
 	db = deps.database;
 }
 
-function getAllMessages(callback) {
+function getAllMessages(userID, callback) {
 
 	db.query(
-		"SELECT * FROM messages", 
-		{ 
+		"SELECT * FROM messages where user_id = :userid", 
+		{ 			
+			replacements: { 
+				userid: userID
+			},
 			type: db.QueryTypes.SELECT
 		}
 	)
@@ -33,7 +36,18 @@ function addMessage(request, callback) {
 	)
   	.success(
   		function(response) {
-  			callback(response);
+
+  			db.query(
+				"select (currval('messages_message_id_seq'::regclass) -1) message_id;", 
+				{ 
+					type: db.QueryTypes.SELECT
+				}
+			)
+		  	.success(
+		  		function(response) {
+		  			callback(response[0]);
+		  		}
+		  	);		
   		}
   	);
 }

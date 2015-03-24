@@ -4,7 +4,7 @@ create extension pgcrypto;
 
 create or replace function insert_time_stamp() returns trigger 
 as 
-	$$
+  $$
 begin
 
   new.created_date  := current_timestamp;
@@ -18,7 +18,7 @@ $$ language plpgsql;
 
 create or replace function update_time_stamp() returns trigger 
 as 
-	$$
+  $$
 begin
 
   new.modified_date := current_timestamp;
@@ -31,9 +31,9 @@ $$ language plpgsql;
 /* Taken from http://stackoverflow.com/a/28573007 */
 create or replace function jsoninsert(relname text, reljson text) returns record 
 as
-	$body$declare
- 	ret record;
- 	inputstring text;
+  $body$declare
+  ret record;
+  inputstring text;
 begin
 
   select string_agg(quote_ident(key),',') 
@@ -190,3 +190,61 @@ end;
 $body$
 language plpgsql volatile;
 
+create or replace function add_friend(
+  e_user_id   int, 
+  e_friend_id int
+) 
+returns boolean as
+  $body$declare
+
+  l_count int;
+begin
+
+  if e_user_id = e_friend_id then
+    return false;
+  end if;
+
+  select count(*)
+  into   l_count
+  from   friends
+  where  user_id        = e_user_id
+  and    friend_user_id = e_friend_id
+  and    end_date is null;
+
+  if l_count = 0 then
+
+    insert into friends
+    (
+      user_id,
+      friend_user_id,
+      start_date
+    )
+    values
+    (
+      e_user_id,
+      e_friend_id,
+      current_date
+    );
+
+    select count(*)
+    into   l_count
+    from   friends
+    where  user_id        = e_user_id
+    and    friend_user_id = e_friend_id
+    and    end_date is null;
+
+    if l_count = 1 then
+      /*commit;*/
+      return true;
+    else
+      /*rollback;*/
+      return false;
+    end if;
+    
+  else
+    return false;
+  end if;
+
+end;
+$body$
+language plpgsql volatile;

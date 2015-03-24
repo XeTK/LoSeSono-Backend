@@ -10,11 +10,15 @@ function setup(deps) {
 	server.getRoute(
 		'/messages',
 		function (request, reply) {
+
+			var userID = Number(request.auth.credentials.user_id);
+
 	    	db.getAllMessages(
+	    		userID,
 				function(messages) {
 
-					console.log('getAllMessages response: ' +JSON.stringify(messages));
-
+					console.log('getAllMessages response: ' + JSON.stringify(messages));
+					
 	    			reply(messages);
 				}
 			);
@@ -41,7 +45,8 @@ function setup(deps) {
 	    	db.addMessage(
 	    		payload,
 	    		function(response) {
-	    			reply({"status":"successful"});
+	    			console.log('Responce: ' + JSON.stringify(response));
+	    			reply(response);
 	    		}
 	    	);
 	    }
