@@ -23,6 +23,24 @@ function getAllMessages(userID, callback) {
   	);
 }
 
+function getSpecificMessageByID(messageID, callback) {
+
+	db.query(
+		"SELECT * FROM messages where message_id = :messageid", 
+		{ 			
+			replacements: { 
+				messageid: messageID
+			},
+			type: db.QueryTypes.SELECT
+		}
+	)
+  	.success(
+  		function(messages) {
+  			callback(messages[0]);
+  		}
+  	);
+}
+
 function addMessage(request, callback) {
 
 	db.query(
@@ -52,6 +70,7 @@ function addMessage(request, callback) {
   	);
 }
 
-exports.setup          = setup;
-exports.getAllMessages = getAllMessages;
-exports.addMessage     = addMessage;
+exports.setup                  = setup;
+exports.getAllMessages         = getAllMessages;
+exports.getSpecificMessageByID = getSpecificMessageByID;
+exports.addMessage             = addMessage;

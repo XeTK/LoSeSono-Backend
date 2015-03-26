@@ -28,7 +28,16 @@ function setup(deps) {
 	server.getRoute(
 		'/message/{id}',
 		function (request, reply) {
-		    reply('TODO /message/{id}');
+
+			var msgID = request.params.id;
+
+		    db.getSpecificMessageByID(
+		    	msgID,
+		    	function(message) {
+		    		console.log('Message: ' + JSON.stringify(message));
+		    		reply(message);
+		    	}
+		    );
 		}
 	);
 
@@ -45,7 +54,7 @@ function setup(deps) {
 	    	db.addMessage(
 	    		payload,
 	    		function(response) {
-	    			console.log('Responce: ' + JSON.stringify(response));
+	    			console.log('Response: ' + JSON.stringify(response));
 	    			reply(response);
 	    		}
 	    	);
