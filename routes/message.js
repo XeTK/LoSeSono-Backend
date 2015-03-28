@@ -42,7 +42,26 @@ function setup(deps) {
 	);
 
 	server.postRoute(
-		'/message/add',
+		'/message/add/user',
+		function (request, reply) {
+
+			var payload = request.payload;
+
+			console.log(JSON.stringify(payload));
+
+	    	db.addUser(
+	    		payload.message_id,
+	    		payload.friend_id,
+	    		function(response) {
+	    			console.log('Response: ' + JSON.stringify(response));
+	    			reply(response);
+	    		}
+	    	);
+	    }
+	);
+
+	server.postRoute(
+		'/message/add/message',
 		function (request, reply) {
 
 			var payload = request.payload;

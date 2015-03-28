@@ -70,7 +70,40 @@ function addMessage(request, callback) {
   	);
 }
 
+function addUser(messageID, friendID, callback) {
+
+	//  group_id | message_id | friends_id | created_date | modified_date | created_by | modified_by 
+
+	db.query(
+		"insert into message_friend_group(message_id, friends_id) values (:messageid, :friendid)", 
+		{ 
+			replacements: { 
+				messageid: messageID,
+				friendid: friendID
+			},
+			type: db.QueryTypes.SELECT
+		}
+	)
+  	.success(
+  		function(response) {
+
+  			db.query(
+				"select (currval('message_friend_group_group_id_seq'::regclass)) group_id;", 
+				{ 
+					type: db.QueryTypes.SELECT
+				}
+			)
+		  	.success(
+		  		function(response) {
+		  			callback(response[0]);
+		  		}
+		  	);		
+  		}
+  	);
+}
+
 exports.setup                  = setup;
 exports.getAllMessages         = getAllMessages;
 exports.getSpecificMessageByID = getSpecificMessageByID;
 exports.addMessage             = addMessage;
+exports.addUser                = addUser;

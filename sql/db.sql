@@ -1,4 +1,4 @@
-\c losesono
+﻿\c losesono
 
 drop table message_votes;
 drop table comments_votes;
@@ -16,7 +16,7 @@ create table users (
 	user_id       serial       primary key,
 	first_name    varchar(32)  not null,
 	last_name     varchar(32)  not null,
-	username      varchar(16)  not null,
+	username      varchar(16)  not null unique,
 	created_date  timestamp,
 	modified_date timestamp,
 	created_by    varchar(100),
@@ -49,12 +49,13 @@ create table friends (
 	friends_id     serial       primary key,
 	user_id        integer      not null references users(user_id),
 	friend_user_id integer      not null references users(user_id),
-	start_date     date         not null check(start_date >= current_date()),
+	start_date     date         not null,
 	end_date       date,
 	created_date   timestamp,
 	modified_date  timestamp,
 	created_by     varchar(100),
-	modified_by    varchar(100)
+	modified_by    varchar(100),
+	unique (user_id, friend_user_id)
 );
 
 create table range (
@@ -83,7 +84,8 @@ create table message_friend_group (
 	created_date  timestamp,
 	modified_date timestamp,
 	created_by    varchar(100),
-	modified_by   varchar(100)
+	modified_by   varchar(100),
+	unique (message_id, friends_id)
 );
 
 create table comments (
