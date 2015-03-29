@@ -5,6 +5,48 @@ function setup(deps) {
 	db = deps.database;
 }
 
+function getAllMessagesCurUser(userID, callback) {
+
+	db.query(
+		"SELECT * FROM messages where user_id = :userid", 
+		{ 			
+			replacements: { 
+				userid: userID
+			},
+			type: db.QueryTypes.SELECT
+		}
+	)
+  	.success(
+  		function(messages) {
+  			callback(messages);
+  		}
+  	);
+}
+
+function getAllMessagesFriends(userID, callback) {
+
+	db.query(
+		"select msg.* \
+		from   messages             msg, \
+		       message_friend_group mfg, \
+		       friends              fri \
+		where  msg.message_id     = mfg.message_id \
+		and    mfg.friends_id     = fri.friends_id \
+		and    fri.friend_user_id = :userid", 
+		{ 			
+			replacements: { 
+				userid: userID
+			},
+			type: db.QueryTypes.SELECT
+		}
+	)
+  	.success(
+  		function(messages) {
+  			callback(messages);
+  		}
+  	);
+}
+
 function getAllMessages(userID, callback) {
 
 	db.query(
@@ -103,7 +145,8 @@ function addUser(messageID, friendID, callback) {
 }
 
 exports.setup                  = setup;
-exports.getAllMessages         = getAllMessages;
+exports.getAllMessagesCurUser  = getAllMessagesCurUser;
+exports.getAllMessagesFriends  = getAllMessagesFriends;
 exports.getSpecificMessageByID = getSpecificMessageByID;
 exports.addMessage             = addMessage;
 exports.addUser                = addUser;

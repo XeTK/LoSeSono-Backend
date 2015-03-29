@@ -8,12 +8,30 @@ function setup(deps) {
 	db.setup(deps);
 
 	server.getRoute(
-		'/messages',
+		'/messages/user',
 		function (request, reply) {
 
 			var userID = Number(request.auth.credentials.user_id);
 
-	    	db.getAllMessages(
+	    	db.getAllMessagesCurUser(
+	    		userID,
+				function(messages) {
+
+					console.log('getAllMessages response: ' + JSON.stringify(messages));
+					
+	    			reply(messages);
+				}
+			);
+	    }
+	);
+
+	server.getRoute(
+		'/messages/friends',
+		function (request, reply) {
+
+			var userID = Number(request.auth.credentials.user_id);
+
+	    	db.getAllMessagesFriends(
 	    		userID,
 				function(messages) {
 
