@@ -26,12 +26,12 @@ function getAllMessagesCurUser(userID, callback) {
 function getAllMessagesFriends(userID, callback) {
 
 	db.query(
-		"select msg.* \
-		from   messages             msg, \
-		       message_friend_group mfg, \
-		       friends              fri \
-		where  msg.message_id     = mfg.message_id \
-		and    mfg.friends_id     = fri.friends_id \
+		"select msg.* \n\
+		from   messages             msg, \n\
+		       message_friend_group mfg, \n\
+		       friends              fri \n\
+		where  msg.message_id     = mfg.message_id \n\
+		and    mfg.friends_id     = fri.friends_id \n\
 		and    fri.friend_user_id = :userid", 
 		{ 			
 			replacements: { 

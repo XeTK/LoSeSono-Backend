@@ -136,17 +136,16 @@ var validate = function (username, password, callback) {
 			if (isValid) {
 
 				db.query(
-					"select u.user_id, \
-							u.first_name, \
-							u.last_name, \
-							u.username, \
-							up.email, \
-							up.facebook_id \
-					 from  users u, \
-						   users_private up \
-					 where u.user_id = up.user_id \
-					 and   u.username = :username \
-					", 
+					"select u.user_id, \n\
+							u.first_name, \n\
+							u.last_name, \n\
+							u.username, \n\
+							up.email, \n\
+							up.facebook_id \n\
+					 from  users u, \n\
+						   users_private up \n\
+					 where u.user_id = up.user_id \n\
+					 and   u.username = :username", 
 					{ 
 						replacements: { 
 							username:  username,
