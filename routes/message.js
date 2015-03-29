@@ -17,7 +17,7 @@ function setup(deps) {
 	    		userID,
 				function(messages) {
 
-					console.log('getAllMessages response: ' + JSON.stringify(messages));
+					console.log('Messages User response: ' + JSON.stringify(messages));
 					
 	    			reply(messages);
 				}
@@ -35,7 +35,7 @@ function setup(deps) {
 	    		userID,
 				function(messages) {
 
-					console.log('getAllMessages response: ' + JSON.stringify(messages));
+					console.log('Messages Friends response: ' + JSON.stringify(messages));
 					
 	    			reply(messages);
 				}
