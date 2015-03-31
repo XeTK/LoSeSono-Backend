@@ -44,6 +44,25 @@ function setup(deps) {
 	);
 
 	server.getRoute(
+		'/messages/notifications',
+		function (request, reply) {
+
+			var userID = Number(request.auth.credentials.user_id);
+
+	    	db.getAllMessagesNotifications(
+	    		userID,
+				function(messages) {
+
+					console.log('Messages Friends response: ' + JSON.stringify(messages));
+					
+	    			reply(messages);
+				}
+			);
+	    }
+	);
+
+
+	server.getRoute(
 		'/message/{id}',
 		function (request, reply) {
 
@@ -90,6 +109,27 @@ function setup(deps) {
 
 	    	db.addMessage(
 	    		payload,
+	    		function(response) {
+	    			console.log('Response: ' + JSON.stringify(response));
+	    			reply(response);
+	    		}
+	    	);
+	    }
+	);
+
+	server.postRoute(
+		'/message/read',
+		function (request, reply) {
+
+			var messageID = request.payload.message_id;
+
+			var userID = request.auth.credentials.user_id;
+
+			console.log(JSON.stringify(payload));
+
+	    	db.addReadMessage(
+	    		messageID,
+	    		userID,
 	    		function(response) {
 	    			console.log('Response: ' + JSON.stringify(response));
 	    			reply(response);
