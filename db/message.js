@@ -117,7 +117,7 @@ function addUser(messageID, friendID, callback) {
 	//  group_id | message_id | friends_id | created_date | modified_date | created_by | modified_by 
 
 	db.query(
-		"insert into message_friend_group(message_id, friends_id) values (:messageid, :friendid)", 
+		"insert into message_friend_group(message_id, friends_user_id) values (:messageid, :friendid)", 
 		{ 
 			replacements: { 
 				messageid: messageID,

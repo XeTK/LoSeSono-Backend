@@ -63,3 +63,9 @@ create trigger insert_stamp before insert on message_votes
 
 create trigger update_stamp before update on message_votes
     for each row execute procedure update_time_stamp();
+
+create trigger insert_stamp before insert on read_messages
+    for each row execute procedure insert_time_stamp();
+
+create trigger update_stamp before update on read_messages
+    for each row execute procedure update_time_stamp();

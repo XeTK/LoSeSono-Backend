@@ -4,6 +4,7 @@ drop table message_votes;
 drop table comments_votes;
 drop table vote_type;
 drop table comments;
+drop table read_messages;
 drop table message_friend_group;
 drop table messages;
 drop table range;
@@ -88,6 +89,17 @@ create table message_friend_group (
 	unique (message_id, friends_id)
 );
 
+create table read_messages (
+	read_id       serial        primary key,
+	message_id    integer       not null references messages(message_id),
+	user_id       integer       not null references users(user_id),
+	created_date  timestamp,
+	modified_date timestamp,
+	created_by    varchar(100),
+	modified_by   varchar(100),
+	unique (message_id, user_id)
+);
+
 create table comments (
 	comment_id    serial       primary key,
 	message_id    integer      not null references messages(message_id),
@@ -126,3 +138,4 @@ create table message_votes (
 	created_by      varchar(100),
 	modified_by     varchar(100)
 );
+
