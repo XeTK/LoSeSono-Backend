@@ -50,12 +50,18 @@ function getAllMessagesFriends(userID, callback) {
 function getAllMessagesNotifications(userID, callback) {
 
 	db.query(
-		"select msg.* \n\
-		from   messages             msg, \n\
-		       message_friend_group mfg, \n\
-		       friends              fri \n\
-		where  msg.message_id     = mfg.message_id \n\
-		and    mfg.friends_id     = fri.friends_id \n\
+		"select msg.* 
+		from   messages             msg, 
+				message_friend_group mfg, 
+				friends              fri 
+		where  msg.message_id     = mfg.message_id 
+		and    mfg.friends_id     = fri.friends_id 
+		and    not exists (
+		           select *
+		           from   read_messages rm
+		           where  rm.message_id = mfg.message_id
+		           and    rm.user_id    = fri.friends_id
+		    ) 
 		and    fri.friend_user_id = :userid", 
 		{ 			
 			replacements: { 
@@ -198,10 +204,11 @@ function addReadMessage(messageID, userID, callback) {
   	);
 }
 
-exports.setup                  = setup;
-exports.getAllMessagesCurUser  = getAllMessagesCurUser;
-exports.getAllMessagesFriends  = getAllMessagesFriends;
-exports.getSpecificMessageByID = getSpecificMessageByID;
-exports.addMessage             = addMessage;
-exports.addUser                = addUser;
+exports.setup                       = setup;
+exports.getAllMessagesCurUser       = getAllMessagesCurUser;
+exports.getAllMessagesFriends       = getAllMessagesFriends;
+exports.getAllMessagesNotifications = getAllMessagesNotifications;
+exports.getSpecificMessageByID      = getSpecificMessageByID;
+exports.addMessage                  = addMessage;
+exports.addUser                     = addUser;
 exports.addReadMessage         = addReadMessage;

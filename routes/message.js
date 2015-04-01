@@ -125,8 +125,6 @@ function setup(deps) {
 
 			var userID = request.auth.credentials.user_id;
 
-			console.log(JSON.stringify(payload));
-
 	    	db.addReadMessage(
 	    		messageID,
 	    		userID,
