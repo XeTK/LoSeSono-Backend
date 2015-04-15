@@ -1,6 +1,7 @@
 
 var db = null;
 
+// Get the dependencies for the application, the database connection is passed around between the different bits of the applications.
 function setup(deps) {
 	db = deps.database;
 }
