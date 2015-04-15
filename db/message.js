@@ -1,3 +1,6 @@
+/*
+ * This class handles all the interaction between messages in the database and applications.
+ */
 
 var db = null;
 
@@ -6,8 +9,10 @@ function setup(deps) {
 	db = deps.database;
 }
 
+// Get all the messages created by the current user. 
 function getAllMessagesCurUser(userID, callback) {
 
+	// Select all the records tied to the current user.
 	db.query(
 		"SELECT * FROM messages where user_id = :userid", 
 		{ 			
@@ -19,13 +24,16 @@ function getAllMessagesCurUser(userID, callback) {
 	)
   	.success(
   		function(messages) {
+  			// Return JSON object with all the messages back to the user.
   			callback(messages);
   		}
   	);
 }
 
+// Get all the messages from the friends of the current user.
 function getAllMessagesFriends(userID, callback) {
 
+	// Select all the relevant information tied to the user. And the messages that have been left for them.
 	db.query(
 		"select msg.* \n\
 		from   messages             msg, \n\
@@ -43,16 +51,19 @@ function getAllMessagesFriends(userID, callback) {
 	)
   	.success(
   		function(messages) {
+  			// Return all of the messages to the method that called the function that calls the database.
   			callback(messages);
   		}
   	);
 }
 
+// This returns all of the messages that have not already been read, this is important for notifications.
 function getAllMessagesNotifications(userID, callback) {
 
+	// Costly query that returns the notifications for all of the messages that have not been read for the user.
 	db.query(
 		"select msg.* \n\
-		from   messages             msg, \n\
+		from    messages             msg, \n\
 				message_friend_group mfg, \n\
 				friends              fri \n\
 		where  msg.message_id     = mfg.message_id \n\
@@ -73,31 +84,16 @@ function getAllMessagesNotifications(userID, callback) {
 	)
   	.success(
   		function(messages) {
+  			// Give all the notifications back to the method that called it.
   			callback(messages);
   		}
   	);
 }
 
-function getAllMessages(userID, callback) {
-
-	db.query(
-		"SELECT * FROM messages where user_id = :userid", 
-		{ 			
-			replacements: { 
-				userid: userID
-			},
-			type: db.QueryTypes.SELECT
-		}
-	)
-  	.success(
-  		function(messages) {
-  			callback(messages);
-  		}
-  	);
-}
-
+// Get message by message_id.
 function getSpecificMessageByID(messageID, callback) {
 
+	// Retrieve the message using its ID.
 	db.query(
 		"SELECT * FROM messages where message_id = :messageid", 
 		{ 			
@@ -109,13 +105,16 @@ function getSpecificMessageByID(messageID, callback) {
 	)
   	.success(
   		function(messages) {
+  			// Return only the current message to the application.
   			callback(messages[0]);
   		}
   	);
 }
 
+// This adds a new message into the database.
 function addMessage(request, callback) {
 
+	// It directly converts the JSON request into a record in the database.
 	db.query(
 		"select jsoninsert('messages', :jsonstring)", 
 		{ 
@@ -128,6 +127,7 @@ function addMessage(request, callback) {
   	.success(
   		function(response) {
 
+  			// Find the ID of the record we just inserted into into the database.
   			db.query(
 				"select (currval('messages_message_id_seq'::regclass) -1) message_id;", 
 				{ 
@@ -136,6 +136,7 @@ function addMessage(request, callback) {
 			)
 		  	.success(
 		  		function(response) {
+		  			// Return that back to the function that called it.
 		  			callback(response[0]);
 		  		}
 		  	);		
@@ -143,10 +144,12 @@ function addMessage(request, callback) {
   	);
 }
 
+// This adds users to messages so they can view them.
 function addUser(messageID, friendID, callback) {
 
 	//  group_id | message_id | friends_id | created_date | modified_date | created_by | modified_by 
 
+	// This adds the user to the message that we just created.
 	db.query(
 		"insert into message_friend_group(message_id, friends_user_id) values (:messageid, :friendid)", 
 		{ 
@@ -160,6 +163,7 @@ function addUser(messageID, friendID, callback) {
   	.success(
   		function(response) {
 
+  			// Get the group id for the link we just created.
   			db.query(
 				"select (currval('message_friend_group_group_id_seq'::regclass)) group_id;", 
 				{ 
@@ -168,6 +172,7 @@ function addUser(messageID, friendID, callback) {
 			)
 		  	.success(
 		  		function(response) {
+		  			// Return it to the method that called it.
 		  			callback(response[0]);
 		  		}
 		  	);		
@@ -175,8 +180,10 @@ function addUser(messageID, friendID, callback) {
   	);
 }
 
+// This function marks a messages as read.
 function addReadMessage(messageID, userID, callback) {
 
+	// This inserts a flag into the database to say the message has been read.
 	db.query(
 		"insert into read_messages(message_id, user_id) values (:messageid, :userid)", 
 		{ 
@@ -190,6 +197,7 @@ function addReadMessage(messageID, userID, callback) {
   	.success(
   		function(response) {
 
+  			// Get the id of the message that has been read.
   			db.query(
 				"select (currval('read_messages_read_id_seq'::regclass)) group_id;", 
 				{ 
@@ -198,6 +206,7 @@ function addReadMessage(messageID, userID, callback) {
 			)
 		  	.success(
 		  		function(response) {
+		  			// Return it back to the method that called the database function.
 		  			callback(response[0]);
 		  		}
 		  	);		
@@ -205,6 +214,7 @@ function addReadMessage(messageID, userID, callback) {
   	);
 }
 
+// Make the methods public that need to be public.
 exports.setup                       = setup;
 exports.getAllMessagesCurUser       = getAllMessagesCurUser;
 exports.getAllMessagesFriends       = getAllMessagesFriends;
@@ -212,4 +222,4 @@ exports.getAllMessagesNotifications = getAllMessagesNotifications;
 exports.getSpecificMessageByID      = getSpecificMessageByID;
 exports.addMessage                  = addMessage;
 exports.addUser                     = addUser;
-exports.addReadMessage         = addReadMessage;
+exports.addReadMessage              = addReadMessage;

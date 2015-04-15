@@ -1,3 +1,6 @@
+/* 
+ * This class is class contains all global functions thats are important to server usage.
+ */
 
 var db = null;
 
@@ -6,10 +9,12 @@ function setup(deps) {
 	db = deps.database;
 }
 
+// This function adds new users into the database.
 function registerUser(userDetails, callback) {
 
 	// select insert_user('Tom','Rosier','XeTK','tom.rosier93@gmail.com1','password');
 
+	// Pass the parameters needed to create a user within the application.
 	db.query(
 		"select insert_user(:firstname, :lastname, :username, :email, :password)", 
 		{ 
@@ -25,10 +30,12 @@ function registerUser(userDetails, callback) {
 	)
   	.success(
   		function(response) {
+  			// Pass back the status to the application.
   			callback(response);
   		}
   	);
 }
 
+// Export functions that need to be public.
 exports.setup        = setup;
 exports.registerUser = registerUser;
