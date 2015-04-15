@@ -1,5 +1,8 @@
-﻿\c losesono
+﻿/* This script creates all the tables needed for the application to work. */
 
+\c losesono
+
+/* Drop all the tables so we can recreate them. */
 drop table message_votes;
 drop table comments_votes;
 drop table vote_type;
@@ -12,6 +15,8 @@ drop table friends;
 drop table users_hash;
 drop table users_private;
 drop table users;
+
+/* The next few statements create the tables needed for the application. */
 
 create table users (
 	user_id       serial       primary key,

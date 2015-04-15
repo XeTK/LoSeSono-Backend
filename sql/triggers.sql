@@ -1,4 +1,7 @@
-/* Tie all of the tables to the triggers they need. */
+/* 
+ * Tie all of the tables to the triggers they need. 
+ * The triggers used here ensure that we have traceability on who edited and created files
+ */
 
 \c losesono
 
