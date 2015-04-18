@@ -39,7 +39,7 @@ function setup(deps) {
 				userID,
 				comment,
 				function(response) {
-					reply(true);
+					reply({'status':'success'});
 				}
 			);
 		}

@@ -48,7 +48,7 @@ function setup(deps) {
 				function(data) {
 					console.log(JSON.stringify(data));
 					// Confirm that the request has carried out successfully.
-					reply('success');
+					reply({'status':'success'});
 				}
 			);
 
