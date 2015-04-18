@@ -1,5 +1,5 @@
 
-var db = require('../db/comments');
+var db = require('../db/comment');
 
 function setup(deps) {
 

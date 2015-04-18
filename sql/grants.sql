@@ -39,4 +39,7 @@ insert into range(range, enabled) values(250, true);
 insert into range(range, enabled) values(500, true);
 insert into range(range, enabled) values(1000, true);
 
+insert into vote_type (type, effect, enabled) values ('positive', +1, true);
+insert into vote_type (type, effect, enabled) values ('negative', -1, false);
+
 //ALTER TABLE messages ALTER COLUMN message_id SET DEFAULT nextval('messages_message_id_seq'::regclass);

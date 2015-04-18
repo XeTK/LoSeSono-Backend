@@ -130,7 +130,8 @@ create table comments_votes (
 	created_date    timestamp,
 	modified_date   timestamp,
 	created_by      varchar(100),
-	modified_by     varchar(100)
+	modified_by     varchar(100),
+	unique (comment_id, user_id)
 );
 
 create table message_votes (
@@ -141,6 +142,7 @@ create table message_votes (
 	created_date    timestamp,
 	modified_date   timestamp,
 	created_by      varchar(100),
-	modified_by     varchar(100)
+	modified_by     varchar(100),
+	unique (message_id, user_id)
 );
 
