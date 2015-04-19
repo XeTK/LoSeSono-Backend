@@ -1,13 +1,15 @@
 var db = null;
 
+// Setup the dependencies when we start the class so we are ready to receive requests.
 function setup(deps) {
 	db = deps.database;
 }
 
+// This adds a vote to a comment, using the userid and the comment id to attach to.
 function addCommentVote(commentID, userID, type, callback) {
 	
 
-
+	// Raw query to insert the vote for the comment, works for either positive or negative.
 	db.query(
 		"insert into comments_votes(comment_id, user_id, vote_type) \n\
 		 values(:commentid, :userid, :type)", 
@@ -23,11 +25,13 @@ function addCommentVote(commentID, userID, type, callback) {
   	.success(
   		function(response) {
   			console.log(JSON.stringify(response));
+  			// Return that we succeed with the request.
   			callback(true);
   		}
   	);
 }
 
+// This does the same as the method above just for the messages instead of comments.
 function addMessageVote(msgID, userID, type, callback) {
 	
 	db.query(
@@ -50,8 +54,10 @@ function addMessageVote(msgID, userID, type, callback) {
   	);
 }
 
+// This counts how many types of each vote has been placed on a comment.
 function getCommentVotes(commentID, callback) {
 
+	// Clever SQL statement that counts the number of each type of vote and groups them to do the the vote_types. 
 	db.query(
 		"select count(comment_vote_id), vote_type \n\
 		from   comments_votes \n\
@@ -66,12 +72,13 @@ function getCommentVotes(commentID, callback) {
 	)
   	.success(
   		function(response) {
+  			// Pass that object with the values in back to the method that called the method.
   			callback(response);
   		}
   	);
 }
 
-
+// Do the same again as the method above just for messages rather than comments.
 function getMessageVotes(msgID, callback) {
 
 	db.query(
@@ -93,7 +100,7 @@ function getMessageVotes(msgID, callback) {
   	);
 }
 
-
+// Make the methods public so they can be used from other modules.
 exports.setup           = setup;
 exports.addCommentVote  = addCommentVote;
 exports.addMessageVote  = addMessageVote;

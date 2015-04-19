@@ -151,7 +151,7 @@ function addUser(messageID, friendID, callback) {
 
 	// This adds the user to the message that we just created.
 	db.query(
-		"insert into message_friend_group(message_id, friends_user_id) values (:messageid, :friendid)", 
+		"insert into message_friend_group(message_id, friends_id) values (:messageid, :friendid)", 
 		{ 
 			replacements: { 
 				messageid: messageID,
