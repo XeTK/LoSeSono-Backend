@@ -62,19 +62,22 @@ function getAllMessagesNotifications(userID, callback) {
 
 	// Costly query that returns the notifications for all of the messages that have not been read for the user.
 	db.query(
-		"select msg.* \n\
-		from    messages             msg, \n\
-				message_friend_group mfg, \n\
-				friends              fri \n\
-		where  msg.message_id     = mfg.message_id \n\
-		and    mfg.friends_id     = fri.friends_id \n\
-		and    not exists ( \n\
-		           select * \n\
-		           from   read_messages rm \n\
-		           where  rm.message_id = mfg.message_id \n\
-		           and    rm.user_id    = fri.friends_id \n\
-		    )  \n\
-		and    fri.friend_user_id = :userid", 
+		"select distinct msg.*  \n\
+		from    messages             msg,  \n\
+				message_friend_group mfg,  \n\
+				friends              fri  \n\
+		where  msg.message_id     = mfg.message_id  \n\
+		and    mfg.friends_id     = fri.friends_id  \n\
+		and    not exists (  \n\
+		           select *  \n\
+		           from   read_messages rm  \n\
+		           where  rm.message_id = mfg.message_id  \n\
+		           and    (rm.user_id   = fri.friends_id  \n\
+		           	or     rm.user_id   = fri.user_id) \n\
+		    )   \n\
+		and    (fri.friend_user_id = :userid \n\
+	     or     fri.user_id = :userid) \n\
+		and    msg.user_id  != :userid", 
 		{ 			
 			replacements: { 
 				userid: userID
