@@ -93,7 +93,7 @@ function setup(deps) {
 				// Clear the session.
 				request.auth.session.clear();
 
-				return reply.redirect('/');
+				return reply({});
 			}
 		}
 	);
